@@ -1,22 +1,28 @@
 name: Sync Fork
 
-on:  
-  workflow_dispatch:
+on:
   schedule:
-    - cron: "0 20 * * 4"
+    - cron: '0 0 * * *'  # Runs daily at midnight UTC
+  workflow_dispatch:  # Allows manual trigger
 
 jobs:
   sync:
     runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
 
-      - name: Sync and merge upstream repository
-        uses: dabreadman/sync-upstream-repo@v1.3.0
+    steps:
+      - name: Checkout forked repository
+        uses: actions/checkout@v2
         with:
-          upstream_repo: "https://github.com/sudheerj/javascript-interview-questions" # Replace with actual upstream repository URL
-          upstream_branch: "master"  # Adjust if different
-          downstream_branch: "master"  # Adjust if needed
           token: ${{ secrets.GITHUB_TOKEN }}
-       
+          fetch-depth: 0  # Ensures full history is fetched
+
+      - name: Set up git remote for upstream
+        run: |
+          git remote add upstream https://github.com/sudheerj/javascript-interview-questions.git
+          git fetch upstream
+
+      - name: Merge upstream changes
+        run: |
+          git checkout master  # Ensure we are on the correct branch
+          git merge upstream/master --no-edit || echo "No new changes to merge"
+          git push origin master
