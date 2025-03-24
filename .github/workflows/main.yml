@@ -1,0 +1,25 @@
+name: Sync Fork
+
+on:  
+  workflow_dispatch:
+  schedule:
+    - cron: "0 20 * * 4"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Sync and merge upstream repository
+        uses: dabreadman/sync-upstream-repo@v1.3.0
+        with:
+          upstream_repo: "https://github.com/sudheerj/javascript-interview-questions" # Replace with actual upstream repository URL
+          upstream_branch: "master"  # Adjust if different
+          downstream_branch: "master"  # Adjust if needed
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch_args: "--tags --force"
+          merge_args: "--no-ff"
+          push_args: "--force"
+          spawn_logs: true
