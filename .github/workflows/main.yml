@@ -19,7 +19,4 @@ jobs:
           upstream_branch: "master"  # Adjust if different
           downstream_branch: "master"  # Adjust if needed
           token: ${{ secrets.GITHUB_TOKEN }}
-          fetch_args: "--tags --force"
-          merge_args: "--no-ff"
-          push_args: "--force"
-          spawn_logs: true
+       
